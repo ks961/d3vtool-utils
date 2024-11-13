@@ -1,8 +1,14 @@
 
 export class ValidationError extends Error {
-    public orignalError?: string;
-    constructor(errorMsg?: string) {
-        super(errorMsg);
-        this.orignalError = errorMsg;
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
+export class ObjectValidationError extends Error {
+    public key: string;
+    constructor(key: string, message?: string) {
+        super(message);
+        this.key = key;
     }
 }

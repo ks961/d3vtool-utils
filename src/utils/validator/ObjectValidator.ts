@@ -1,4 +1,4 @@
-import { ValidationError } from "./error";
+import { ObjectValidationError, ValidationError } from "./error";
 
 export type ObjectType<T> = {[key in keyof T]: T[key]};
 
@@ -49,7 +49,7 @@ export class ObjectValidator<T> {
                 value.validate((object as any)[key]);
             } catch(err) {
                 if(err instanceof ValidationError) {
-                    throw new ValidationError(`Field '${key}' validation failed: ${err.message}`);
+                    throw new ObjectValidationError(key, err.message);
                 }
             }
         }
