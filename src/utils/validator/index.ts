@@ -2,7 +2,7 @@ import { NumberValidator } from "./NumberValidator";
 import { ObjectType, ObjectValidator } from "./ObjectValidator";
 import { OptionalValidator } from "./OptionalValidator";
 import { StringValidator } from "./StringValidator";
-import { ValidationError } from "./error";
+import { ValidationError, ObjectValidationError } from "./error";
 
 type VInfer<T> = T extends ObjectValidator<infer U>
   ? { 
@@ -36,4 +36,5 @@ export {
     VInfer,
     Validator,
     ValidationError,
+    ObjectValidationError
 }
