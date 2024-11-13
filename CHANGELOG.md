@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.0] - 2024-11-13
+### Added
+
+- Added: Better Generic Error messages.
+
 ## [2.3.0] - 2024-11-13
 ### Added
 
