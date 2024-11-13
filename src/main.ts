@@ -17,6 +17,6 @@ try {
   console.log(errors);
 } catch(err: unknown) {
   if(err instanceof ValidationError) {
-    console.log(err.orignal);
+    console.log(err.orignalError);
   }
 }
