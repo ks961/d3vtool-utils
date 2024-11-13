@@ -1,4 +1,4 @@
-import { Validator, type VInfer } from "../dist";
+import { ValidationError, Validator, type VInfer } from "../dist";
 
 const schema = Validator.object({
   name: Validator.number().min(5),
@@ -12,6 +12,11 @@ const schemaObj: Schema = {
   email: "works@mail.co"
 }
 
-const errors = schema.validate(schemaObj);
-
-console.log(errors);
+try {
+  const errors = schema.validate(schemaObj);
+  console.log(errors);
+} catch(err: unknown) {
+  if(err instanceof ValidationError) {
+    console.log(err.message);
+  }
+}
