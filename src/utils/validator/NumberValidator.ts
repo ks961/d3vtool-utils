@@ -1,3 +1,4 @@
+import { ValidationError } from "./error";
 import { OptionalValidator } from "./OptionalValidator";
 import { RangeBounded, RegExpValidator } from "./types";
 
@@ -83,13 +84,13 @@ export class NumberValidator implements RangeBounded {
             return true;
 
         if(typeof value !== "number") {
-            throw new Error("An illegal type was passed, 'number' expected.")
+            throw new ValidationError("An illegal type was passed, 'number' expected.")
         }
         
         for(const validator of this.#validators) {
             const regex = new RegExp(validator.pattern);
             if(!regex.test(value.toString()))
-                throw new Error(validator.error);
+                throw new ValidationError(validator.error);
         }
 
         return true;

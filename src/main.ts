@@ -1,17 +1,17 @@
 import { Validator, type VInfer } from "../dist";
 
 const schema = Validator.object({
-  name: Validator.number().min(5).optional(),
+  name: Validator.number().min(5),
   email: Validator.string().email(),
 });
 
 type Schema = VInfer<typeof schema>;
 
 const schemaObj: Schema = {
-  // name: "Leonardo",
+  name: 221,
   email: "works@mail.co"
 }
 
-const errors = schema.validateSafely(schemaObj);
+const errors = schema.validate(schemaObj);
 
 console.log(errors);
