@@ -2,8 +2,9 @@ import { NumberValidator } from "./NumberValidator";
 import { ObjectType, ObjectValidator } from "./ObjectValidator";
 import { OptionalValidator } from "./OptionalValidator";
 import { StringValidator } from "./StringValidator";
+import { ValidationError } from "./error";
 
-export type VInfer<T> = T extends ObjectValidator<infer U>
+type VInfer<T> = T extends ObjectValidator<infer U>
   ? { 
       [Key in keyof U as VInfer<U[Key]> extends OptionalValidator<infer _> ? Key : never]?: VInfer<U[Key]> extends OptionalValidator<infer X> ? VInfer<X> : VInfer<U[Key]>
     } & {
@@ -14,7 +15,7 @@ export type VInfer<T> = T extends ObjectValidator<infer U>
   : T;
 
 
-export class Validator {
+class Validator {
 
     static string() {
         return new StringValidator();
@@ -29,4 +30,10 @@ export class Validator {
     ) {
         return new ObjectValidator(object);
     }
+}
+
+export {
+    VInfer,
+    Validator,
+    ValidationError,
 }
