@@ -4,6 +4,7 @@ import { RangeBounded, RegExpValidator } from "./types";
 export class StringValidator implements RangeBounded {
 
     #validators: RegExpValidator[] = [];
+    #isOptional: boolean = false;
 
     min(
         minimum: number,
@@ -64,6 +65,7 @@ export class StringValidator implements RangeBounded {
     }
 
     optional(): OptionalValidator<this> {
+        this.#isOptional = true;
         return new OptionalValidator<this>(this);
     }
 
@@ -81,6 +83,9 @@ export class StringValidator implements RangeBounded {
 
     validateSafely(value: unknown): string[] {
         const errors: string[] = [];
+        
+        if(this.#isOptional && !value) 
+            return errors;
 
         if(typeof value !== "string") {
             errors.push("An illegal type was passed, 'string' expected.")
@@ -98,6 +103,9 @@ export class StringValidator implements RangeBounded {
     }
    
     validate(value: unknown): boolean {
+        if(this.#isOptional && !value) 
+            return true;
+        
         if(typeof value !== "string") {
             throw new Error("An illegal type was passed, 'string' expected.");
         }
