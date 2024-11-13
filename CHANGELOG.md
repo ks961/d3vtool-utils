@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.5.1] - 2024-11-13
+### Refactor
+
+- Refactor: ValidationError class.
+
+## [2.5.0] - 2024-11-13
+### Refactor
+
+- Refactor: Validator index.ts file and ValidationError class.
+
 ## [2.4.1] - 2024-11-13
 ### Refactor
 
