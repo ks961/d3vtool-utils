@@ -1,7 +1,8 @@
-import { ValidationError, Validator, VInfer } from "./validator/index";
+import { ValidationError, ObjectValidationError, Validator, VInfer } from "./validator/index";
 
 export {
     type VInfer,
     Validator,
-    ValidationError
+    ValidationError,
+    ObjectValidationError,
 }
