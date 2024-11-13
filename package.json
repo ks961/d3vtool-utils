@@ -32,11 +32,15 @@
     "dist"
   ],
   "devDependencies": {
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
   "author": "Sudhanshu Kumar"
 }

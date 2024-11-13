@@ -74,8 +74,11 @@ export class StringValidator implements RangeBounded {
         pattern: RegExp,
         error: string,
     ) {
+        let regexStr = pattern.toString();
+        regexStr = regexStr.slice(1, regexStr.lastIndexOf('/'));
+
         this.#validators.push({
-            pattern: pattern.toString(),
+            pattern: regexStr,
             error
         });
 
