@@ -1,0 +1,112 @@
+import { OptionalValidator } from "./OptionalValidator";
+import { RangeBounded, RegExpValidator } from "./types";
+
+export class StringValidator implements RangeBounded {
+
+    #validators: RegExpValidator[] = [];
+
+    min(
+        minimum: number,
+        error: string = "The minimum required length has not been met."
+    ): this {
+        this.#validators.push({
+            pattern: `^.{${minimum},}$`,
+            error,
+        });
+        return this;
+    }
+    
+    max(
+        maximum: number,
+        error: string = "The string exceeds the maximum allowed length."
+    ): this {
+        this.#validators.push({
+            pattern: `^.{0,${maximum}}$`,
+            error
+        });
+        return this;
+    }
+
+    length(
+        length: number,
+        error: string = "The string is not equal to required length."
+    ): this {
+        this.#validators.push({
+            pattern: `^.{${length}}$`,
+            error
+        });
+       
+        return this;
+    }
+
+    email(
+        error: string = "Email address is invalid"
+    ) {
+        this.#validators.push({
+            pattern: "(?=^[a-zA-Z]+)[a-zA-Z\%\-\_\.\+0-9]+@[a-zA-Z\-]+\.[a-zA-Z]{2,}$",
+            error
+        });
+
+        return this;
+    }
+
+    password(
+        error: string = "Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 8 characters long"
+    ) {
+        const pattern = "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$";
+        
+        this.#validators.push({
+            pattern: pattern.toString(),
+            error
+        });
+
+        return this;
+    }
+
+    optional(): OptionalValidator<this> {
+        return new OptionalValidator<this>(this);
+    }
+
+    regex(
+        pattern: RegExp,
+        error: string,
+    ) {
+        this.#validators.push({
+            pattern: pattern.toString(),
+            error
+        });
+
+        return this;
+    }
+
+    validateSafely(value: unknown): string[] {
+        const errors: string[] = [];
+
+        if(typeof value !== "string") {
+            errors.push("An illegal type was passed, 'string' expected.")
+            return errors;
+        }
+
+        for(const validator of this.#validators) {
+            const regex = new RegExp(validator.pattern);
+            
+            if(!regex.test(value))
+                errors.push(validator.error);
+        }
+
+        return errors;
+    }
+   
+    validate(value: unknown): boolean {
+        if(typeof value !== "string") {
+            throw new Error("An illegal type was passed, 'string' expected.");
+        }
+        for(const validator of this.#validators) {
+            const regex = new RegExp(validator.pattern);
+            if(!regex.test(value))
+                throw new Error(validator.error);
+        }
+
+        return true;
+    }
+}

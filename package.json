@@ -1,0 +1,42 @@
+{
+  "name": "@d3vtool/utils",
+  "version": "2.1.0",
+  "type": "module",
+  "description": "A collection of utility functions designed to simplify common tasks in your application.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "Utility Functions",
+    "Helper Functions",
+    "General-purpose utilities",
+    "Cross-framework utilities",
+    "JavaScript utilities",
+    "TypeScript utils",
+    "Reusable functions",
+    "Common tasks",
+    "Toolkit",
+    "Functional programming helpers",
+    "Code simplification",
+    "App development utilities",
+    "Application helpers",
+    "Framework-agnostic utilities",
+    "Cross-platform utilities",
+    "Data manipulation utilities",
+    "String, Date, Math functions",
+    "Modular utilities",
+    "Lightweight utilities",
+    "JavaScript toolkit",
+    "TypeScript helper functions"
+  ],
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {},
+  "author": "Sudhanshu Kumar"
+}
