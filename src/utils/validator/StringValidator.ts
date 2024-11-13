@@ -9,7 +9,7 @@ export class StringValidator implements RangeBounded {
 
     min(
         minimum: number,
-        error: string = "The minimum required length has not been met."
+        error: string = `The minimum required length is: ${minimum}.`
     ): this {
         this.#validators.push({
             pattern: `^.{${minimum},}$`,
@@ -20,7 +20,7 @@ export class StringValidator implements RangeBounded {
     
     max(
         maximum: number,
-        error: string = "The string exceeds the maximum allowed length."
+        error: string = `The string exceeds the maximum length: ${maximum}.`
     ): this {
         this.#validators.push({
             pattern: `^.{0,${maximum}}$`,
@@ -31,7 +31,7 @@ export class StringValidator implements RangeBounded {
 
     length(
         length: number,
-        error: string = "The string is not equal to required length."
+        error: string = `The string is not equal to required length: ${length}.`
     ): this {
         this.#validators.push({
             pattern: `^.{${length}}$`,

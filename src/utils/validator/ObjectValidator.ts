@@ -44,8 +44,14 @@ export class ObjectValidator<T> {
             if(typeof value.validate !== "function") {
                 throw new ValidationError("Invalid validator object.");
             }
-
-            value.validate((object as any)[key]);
+            
+            try {
+                value.validate((object as any)[key]);
+            } catch(err) {
+                if(err instanceof ValidationError) {
+                    throw new ValidationError(`Field '${key}' validation failed: ${err.message}`);
+                }
+            }
         }
     }
 }

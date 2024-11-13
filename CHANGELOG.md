@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.3.0] - 2024-11-13
+### Added
+
+- Added Custom Error Class for Improved Error Handling.
+
 ## [2.1.0] - 2024-11-13
 ### Added
 - Added 'Optional' validation support.
