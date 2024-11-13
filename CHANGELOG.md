@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.6.0] - 2024-11-13
+## [2.7.0] - 2024-11-13
 ### Refactor
 
 - Added: ObjectValidationError class | Update: ObjectorValidator to throw new error type 'ObjectValidationError'".
