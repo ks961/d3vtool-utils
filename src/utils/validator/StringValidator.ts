@@ -55,7 +55,7 @@ export class StringValidator implements RangeBounded {
     password(
         error: string = "Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 8 characters long"
     ) {
-        const pattern = "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$";
+        const pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$";
         
         this.#validators.push({
             pattern: pattern.toString(),
