@@ -20,7 +20,8 @@ yarn add @d3vtool/hooks
 
 ## Usage
 
-### String Validation
+
+### 1. String Validation
 
 ```ts
 import { Validator, ValidationError, type VInfer } from "@d3vtool/utils";
@@ -47,7 +48,8 @@ try {
 }
 ```
 
-### Number Validation
+
+### 2. Number Validation
 
 ```ts
 import { Validator, ValidationError, type VInfer } from "@d3vtool/utils";
@@ -74,7 +76,8 @@ try {
 }
 ```
 
-### Simple Object Validation
+
+### 3. Simple Object Validation
 
 ```ts
 import { Validator, ObjectValidationError, type VInfer } from "@d3vtool/utils";
@@ -106,7 +109,8 @@ try {
 }
 ```
 
-### `optional()` Schema Validation
+
+### 4. `optional()` Schema Validation
 
 ```ts
 import { Validator, ObjectValidationError, type VInfer } from "@d3vtool/utils";
@@ -165,7 +169,8 @@ try {
 - If both `name` and `email` are provided, the validation will pass.
 - If only `name` is provided and `email` is omitted, the validation will still pass because `email` is marked as optional.
 
-### Object Validation with Optional and Self-Referencing Fields
+
+### 5. Object Validation with Optional and Self-Referencing Fields
 
 ```ts
 import { Validator, ObjectValidationError, type VInfer } from "@d3vtool/utils";
