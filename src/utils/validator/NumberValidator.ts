@@ -1,5 +1,6 @@
 import { ValidationError } from "./error";
 import { OptionalValidator } from "./OptionalValidator";
+import { SelfValidator } from "./SelfValidator";
 import { RangeBounded, RegExpValidator } from "./types";
 
 export class NumberValidator implements RangeBounded {
@@ -39,6 +40,13 @@ export class NumberValidator implements RangeBounded {
         });
        
         return this;
+    }
+
+    equalsToField(
+        propertyName: string, 
+        errorMsg: string = "The provided value is invalid or does not meet the expected criteria."
+    ) {        
+        return new SelfValidator<this>(propertyName, errorMsg);
     }
 
     optional(): OptionalValidator<this> {

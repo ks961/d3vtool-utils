@@ -1,26 +1,22 @@
 import { ValidationError, Validator, type VInfer } from "../dist";
 
-const schema = Validator.object({
-  name: Validator.number().min(5),
-  email: Validator.string().email(),
-  password: Validator.string().password("1 of all chars")
-});
+const usernameSchema = Validator.string().max(5);
 
-type Schema = VInfer<typeof schema>;
+type Username = VInfer<typeof usernameSchema>;
 
-const schemaObj: Schema = {
-  name: 392911,
-  email: "works@mail.co",
-  password: "P4sswd@ss"
-}
+const username: Username = "popHse";
 
+const errors = usernameSchema.validateSafely(username)
+
+console.log(errors);
+
+// or
 
 try {
-  schema.validate(schemaObj);
+  usernameSchema.validate(username);
 } catch(err: unknown) {
-  console.log("err:", err);
-  
   if(err instanceof ValidationError) {
-    console.log(err.message);
+    // do something with it
+    console.log(err);
   }
 }

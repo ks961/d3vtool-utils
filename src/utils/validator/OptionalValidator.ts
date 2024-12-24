@@ -1,10 +1,13 @@
 
-
 export class OptionalValidator<T> {
     private obj: T;
 
     constructor(obj: T) {
         this.obj = obj;
+    }
+
+    unwrap() {
+        return this.obj;
     }
 
     validateSafely(value: unknown) {

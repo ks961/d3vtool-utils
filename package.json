@@ -32,6 +32,7 @@
     "dist"
   ],
   "devDependencies": {
+    "esbuild": "^0.24.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"
   },
@@ -39,6 +40,8 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
+    "build": "tsc && esbuild ./dist/**/*.js --minify --outdir=./dist --allow-overwrite",
+    "publish": "npm publish --access public",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
