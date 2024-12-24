@@ -20,7 +20,7 @@ yarn add @d3vtool/hooks
 
 ## Usage
 
-1. String Validation
+### String Validation
 
 ```ts
 import { Validator, ValidationError, type VInfer } from "@d3vtool/utils";
@@ -47,7 +47,7 @@ try {
 }
 ```
 
-2. Number Validation
+### Number Validation
 
 ```ts
 import { Validator, ValidationError, type VInfer } from "@d3vtool/utils";
@@ -74,7 +74,7 @@ try {
 }
 ```
 
-3. Simple Object Validation
+### Simple Object Validation
 
 ```ts
 import { Validator, ObjectValidationError, type VInfer } from "@d3vtool/utils";
@@ -106,7 +106,7 @@ try {
 }
 ```
 
-4. `optional()` Schema Validation
+### `optional()` Schema Validation
 
 ```ts
 import { Validator, ObjectValidationError, type VInfer } from "@d3vtool/utils";
@@ -157,15 +157,15 @@ try {
 }
 ```
 
-### Explanation:
+#### Explanation:
 1. **`name` field**: This field is required, and it must be a string with a minimum length of 5 characters.
 2. **`email` field**: This field is optional due to `.optional()`. If it's provided, it must be a valid email address; if not, the validation will still pass without errors.
 
-### Example Behavior:
+#### Example Behavior:
 - If both `name` and `email` are provided, the validation will pass.
 - If only `name` is provided and `email` is omitted, the validation will still pass because `email` is marked as optional.
 
-5. Object Validation with Optional and Self-Referencing Fields
+### Object Validation with Optional and Self-Referencing Fields
 
 ```ts
 import { Validator, ObjectValidationError, type VInfer } from "@d3vtool/utils";
@@ -200,7 +200,7 @@ try {
 }
 ```
 
-### Explanation:
+#### Explanation:
 - **`name`**: The `name` field must be a number and have a minimum value of 5.
 - **`email`**: The `email` field must be a valid email address.
 - **`password`**: The `password` field must be at least 8 characters long and a valid password format.

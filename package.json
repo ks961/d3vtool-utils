@@ -41,7 +41,6 @@
   },
   "scripts": {
     "build": "tsc && esbuild ./dist/**/*.js --minify --outdir=./dist --allow-overwrite",
-    "publish": "npm publish --access public",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
