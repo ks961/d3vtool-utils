@@ -3,7 +3,10 @@
 export class StringUtils {
     
     public static toTitleCase(input: string): string {
-        const replacedText = input.replace(/[-_\s]+/g, " ");
+
+        const camelCaseHandled = input.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+        const replacedText = camelCaseHandled.replace(/[-_\s]+/g, " ");
  
         const words = replacedText.split(" ");
 
