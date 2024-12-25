@@ -18,7 +18,7 @@ npm install @d3vtool/hooks
 yarn add @d3vtool/hooks
 ```
 
-## Validator Usage
+## Validator Examples
 
 
 ### 1. String Validation
@@ -213,7 +213,7 @@ try {
 
 In this example, the `validateSafely` function will check the provided `schemaObj` and return any validation errors, ensuring that `confirmPassword` (if present) matches `password`.
 
-## StringUtils Usage
+## StringUtils Examples
 
 ### 1. `toTitleCase(input: string): string`
 
