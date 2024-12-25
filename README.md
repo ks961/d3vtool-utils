@@ -2,6 +2,9 @@
 
 A collection of utility functions designed to simplify common tasks in your application
 
+- [**Validator**](#validator-examples)
+- [**StringUtils**](#stringutils-examples)
+
 ## Installation
 
 You can install the package using npm or yarn:
