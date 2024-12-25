@@ -1,6 +1,15 @@
-export { 
+import {
     ValidationError, 
     ObjectValidationError, 
     Validator, 
-    VInfer 
+    VInfer,
 } from "./validator/index";
+import { StringUtils } from "./string-utils/index";
+
+export { 
+    ValidationError, 
+    ObjectValidationError, 
+    Validator,
+    VInfer,
+    StringUtils
+};

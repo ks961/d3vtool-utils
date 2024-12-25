@@ -18,7 +18,7 @@ npm install @d3vtool/hooks
 yarn add @d3vtool/hooks
 ```
 
-## Usage
+## Validator Usage
 
 
 ### 1. String Validation
@@ -166,8 +166,8 @@ try {
 2. **`email` field**: This field is optional due to `.optional()`. If it's provided, it must be a valid email address; if not, the validation will still pass without errors.
 
 #### Example Behavior:
-- If both `name` and `email` are provided, the validation will pass.
-- If only `name` is provided and `email` is omitted, the validation will still pass because `email` is marked as optional.
+1. If both `name` and `email` are provided, the validation will pass.
+2. If only `name` is provided and `email` is omitted, the validation will still pass because `email` is marked as optional.
 
 
 ### 5. Object Validation with Optional and Self-Referencing Fields
@@ -212,3 +212,116 @@ try {
 - **`confirmPassword`**: The `confirmPassword` field is optional but, if provided, must match the value of the `password` field (using `equalsToField("password")`).
 
 In this example, the `validateSafely` function will check the provided `schemaObj` and return any validation errors, ensuring that `confirmPassword` (if present) matches `password`.
+
+## StringUtils Usage
+
+### 1. `toTitleCase(input: string): string`
+
+Converts the input string to title case (each word starts with an uppercase letter and the rest are lowercase).
+
+```ts
+import { StringUtils } from "@d3vtool/utils";
+
+const input = "hello world from chatgpt";
+const titleCase = StringUtils.toTitleCase(input);
+
+console.log(titleCase); // "Hello World From Chatgpt"
+```
+
+---
+
+### 2. `toCamelCase(input: string): string`
+
+Converts the input string to camelCase (first word in lowercase and each subsequent word capitalized).
+
+```ts
+import { StringUtils } from "@d3vtool/utils";
+
+const input = "hello world from chatgpt";
+const camelCase = StringUtils.toCamelCase(input);
+
+console.log(camelCase); // "helloWorldFromChatgpt"
+```
+
+---
+
+### 3. `toPascalCase(input: string): string`
+
+Converts the input string to PascalCase (each word capitalized without spaces).
+
+```ts
+import { StringUtils } from "@d3vtool/utils";
+
+const input = "hello world from chatgpt";
+const pascalCase = StringUtils.toPascalCase(input);
+
+console.log(pascalCase); // "HelloWorldFromChatgpt"
+```
+
+---
+
+### 4. `toKebabCase(input: string): string`
+
+Converts the input string to kebab-case (words separated by hyphens with lowercase letters).
+
+```ts
+import { StringUtils } from "@d3vtool/utils";
+
+const input = "hello world from chatgpt";
+const kebabCase = StringUtils.toKebabCase(input);
+
+console.log(kebabCase); // "hello-world-from-chatgpt"
+```
+
+---
+
+### 5. `isUpperCase(input: string): boolean`
+
+Checks if the input string is entirely in uppercase.
+
+```ts
+import { StringUtils } from "@d3vtool/utils";
+
+const input1 = "HELLO WORLD";
+const input2 = "Hello World";
+
+const isUpper1 = StringUtils.isUpperCase(input1);
+const isUpper2 = StringUtils.isUpperCase(input2);
+
+console.log(isUpper1); // true
+console.log(isUpper2); // false
+```
+
+---
+
+### 6. `isLowerCase(input: string): boolean`
+
+Checks if the input string is entirely in lowercase.
+
+```ts
+import { StringUtils } from "@d3vtool/utils";
+
+const input1 = "hello world";
+const input2 = "Hello World";
+
+const isLower1 = StringUtils.isLowerCase(input1);
+const isLower2 = StringUtils.isLowerCase(input2);
+
+console.log(isLower1); // true
+console.log(isLower2); // false
+```
+
+---
+
+### 7. `toAlternateCasing(input: string): string`
+
+Converts the input string to alternate casing, where the characters alternate between uppercase and lowercase.
+
+```ts
+import { StringUtils } from "@d3vtool/utils";
+
+const input = "hello world";
+const alternateCasing = StringUtils.toAlternateCasing(input);
+
+console.log(alternateCasing); // "HeLlO wOrLd"
+```

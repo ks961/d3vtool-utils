@@ -1,4 +1,4 @@
-import { SelfValidator } from "./SelfValidator";
+import { SelfRefValidator } from "./SelfRefValidator";
 import { StringValidator } from "./StringValidator";
 import { NumberValidator } from "./NumberValidator";
 import { OptionalValidator } from "./OptionalValidator";
@@ -11,7 +11,7 @@ type VInfer<T> = T extends ObjectValidator<infer U>
     } & {
         [Key in keyof U as VInfer<U[Key]> extends OptionalValidator<infer _> ? never : Key]: VInfer<U[Key]> extends OptionalValidator<infer X> ? VInfer<X> : VInfer<U[Key]>
     }
-  : T extends SelfValidator<infer U> ? VInfer<U>
+  : T extends SelfRefValidator<infer U> ? VInfer<U>
   : T extends StringValidator ? string
   : T extends NumberValidator ? number
   : T;
@@ -39,4 +39,4 @@ export {
     Validator,
     ValidationError,
     ObjectValidationError
-}
+};

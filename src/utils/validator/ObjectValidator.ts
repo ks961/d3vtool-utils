@@ -1,4 +1,4 @@
-import { SelfValidator } from "./SelfValidator";
+import { SelfRefValidator } from "./SelfRefValidator";
 import { OptionalValidator } from "./OptionalValidator";
 import { ObjectValidationError, ValidationError } from "./error";
 
@@ -11,28 +11,35 @@ export class ObjectValidator<T> {
     constructor(object: ObjectType<T>) {
         this.#__object__ = object;
     }
+
+    public clone() {
+        return structuredClone ? 
+            structuredClone(this.#__object__) : 
+                JSON.parse(JSON.stringify(this.#__object__));
+    }
     
-    selfValidator(
+    selfRefValidator(
         object: any,
         key: string,
-        selfValidator: SelfValidator<unknown>
-    ): string {
+        reference: SelfRefValidator<unknown>
+    ): string | undefined {
 
         if(typeof object !== "object") {
             return "'equalsToField' Fn can only be used in the same schema field for comparison. "
         }
 
-        const propertyNameToMatch = selfValidator.getPropertyName();
+        const propertyNameToMatch = reference.getPropertyName();
         
         const providedObjValue = (object as any)[key];
 
-        if(selfValidator.isOptional() && providedObjValue === undefined) return "";
+        if(reference.isOptional() && providedObjValue === undefined) return;
         
-        const existingObjValue = (object as any)[propertyNameToMatch];        
+        const propertyNameToMatchValue = (object as any)[propertyNameToMatch];        
     
-        if(providedObjValue === existingObjValue) return "";
+        if(providedObjValue === propertyNameToMatchValue) 
+            return;
     
-        return selfValidator.getErrorMsg();
+        return reference.getErrorMsg();
     }
 
     validateSafely(object: unknown) {
@@ -50,17 +57,17 @@ export class ObjectValidator<T> {
     
                 const innerObj = value.unwrap();
                 
-                if(innerObj instanceof SelfValidator) {
-                    const errorMsg = this.selfValidator(object, key, innerObj);                    
-                    if(errorMsg.length > 0) {
+                if(innerObj instanceof SelfRefValidator) {
+                    const errorMsg = this.selfRefValidator(object, key, innerObj);                    
+                    if(errorMsg) {
                         errorsMap[key] = [errorMsg];
                     }
                     continue;
                 }
-            } else if(value instanceof SelfValidator) {
-                const errorMsg = this.selfValidator(object, key, value);
+            } else if(value instanceof SelfRefValidator) {
+                const errorMsg = this.selfRefValidator(object, key, value);
                                     
-                if(errorMsg.length > 0) {
+                if(errorMsg) {
                     errorsMap[key] = [errorMsg];
                 }
                 continue;
@@ -91,19 +98,19 @@ export class ObjectValidator<T> {
     
                 const innerObj = value.unwrap();
                 
-                if(innerObj instanceof SelfValidator) {
-                    const errorMsg = this.selfValidator(object, key, innerObj);                    
-                    if(errorMsg.length > 0) {
+                if(innerObj instanceof SelfRefValidator) {
+                    const errorMsg = this.selfRefValidator(object, key, innerObj);                    
+                    if(errorMsg) {
                         throw new ObjectValidationError(key, errorMsg);
                     }
                     continue;
                 }
 
-                // else if it's optional then validator functions will handle it.
-            } else if(value instanceof SelfValidator) {
-                const errorMsg = this.selfValidator(object, key, value);
+            // else if it's optional then validator functions will handle it.
+            } else if(value instanceof SelfRefValidator) {
+                const errorMsg = this.selfRefValidator(object, key, value);
                                     
-                if(errorMsg.length > 0) {
+                if(errorMsg) {
                     throw new ObjectValidationError(key, errorMsg);
                 }
 

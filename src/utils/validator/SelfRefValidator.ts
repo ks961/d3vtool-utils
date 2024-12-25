@@ -1,6 +1,6 @@
 import { OptionalValidator } from "./OptionalValidator";
 
-export class SelfValidator<T> {
+export class SelfRefValidator<T> {
     #errorMsg: string;
     #isOptional: boolean = false;
     #propertyName: string;
