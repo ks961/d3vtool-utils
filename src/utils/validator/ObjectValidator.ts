@@ -12,7 +12,7 @@ export class ObjectValidator<T> {
         this.#__object__ = object;
     }
 
-    public clone() {
+    public clone(): T {
         return structuredClone ? 
             structuredClone(this.#__object__) : 
                 JSON.parse(JSON.stringify(this.#__object__));
