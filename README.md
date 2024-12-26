@@ -328,3 +328,185 @@ const alternateCasing = StringUtils.toAlternateCasing(input);
 
 console.log(alternateCasing); // "HeLlO wOrLd"
 ```
+
+## JWT Utility Examples
+
+### 1. `signJwt(claims: JwtClaim, customClaims: T, secret: string, options: JwtOptions = { alg: "HS256" }): string`
+
+Signs a JWT (JSON Web Token) with the provided claims, custom claims, secret key, and options.
+
+#### Example Usage
+
+```ts
+import { signJwt, createIssueAt, createExpiry } from "@d3vtool/utils";
+
+const claims = {
+    aud: "http://localhost:4000",
+    iat: createIssueAt(new Date(Date.now())),
+    exp: createExpiry("1h"),
+    iss: "server-x",
+    sub: "user123"
+};
+
+const customClaims = {
+    role: "admin",
+    name: "John Doe"
+};
+
+const secret = "itsasecret";
+
+// Sign the JWT with default algorithm (HS256)
+const token = signJwt(claims, customClaims, secret);
+
+console.log(token); // Signed JWT token as a string
+```
+
+#### Error Handling
+
+The `signJwt` function may throw an error if the signing algorithm specified in `options` is not supported. For example:
+
+```ts
+import { signJwt, createIssueAt, createExpiry } from "@d3vtool/utils";
+
+const claims = {
+    aud: "http://localhost:4000",
+    iat: createIssueAt(new Date(Date.now())),
+    exp: createExpiry("1h"),
+    iss: "server-x",
+    sub: "user123"
+};
+
+const customClaims = {
+    role: "admin",
+    name: "John Doe"
+};
+
+const secret = "itsasecret";
+
+// Attempt to sign the JWT with an unsupported algorithm
+try {
+    const token = signJwt(claims, customClaims, secret, { alg: "HS512" });
+    console.log(token);
+} catch (error) {
+    if (error instanceof BadJwtHeader) {
+        console.error(`Error: Unsupported signing algorithm`);
+    } else {
+        console.error(`Unexpected error:`, error);
+    }
+}
+```
+
+---
+
+### Supported Algorithms for JWT Signing
+
+The following signing algorithms are supported by the `signJwt` function:
+
+- **HS256** (default): HMAC using SHA-256.
+- **HS384**: HMAC using SHA-384.
+- **HS512**: HMAC using SHA-512.
+
+You can specify which algorithm to use by passing the `alg` option when calling `signJwt`.
+
+#### Example Usage with Custom Signing Algorithm
+
+```ts
+import { signJwt, createIssueAt, createExpiry } from "@d3vtool/utils";
+
+const claims = {
+    aud: "http://localhost:4000",
+    iat: createIssueAt(new Date(Date.now())),
+    exp: createExpiry("2h"), // 2hr from now
+    iss: "server-x",
+    sub: "user123"
+};
+
+const customClaims = {
+    role: "admin",
+    name: "John Doe"
+};
+
+const secret = "itsasecret";
+
+// Sign the JWT with HS384 algorithm
+const token = signJwt(claims, customClaims, secret, { alg: "HS384" });
+
+console.log(token); // Signed JWT token using HS384
+```
+
+#### Error Handling
+
+When using a custom algorithm, ensure that the algorithm is one of the supported ones: **HS256**, **HS384**, or **HS512**. If an unsupported algorithm is passed, an error will be thrown:
+
+```ts
+import { signJwt, createIssueAt, createExpiry } from "@d3vtool/utils";
+
+const secret = "itsasecret";
+const claims = {
+    aud: "http://localhost:4000",
+    iat: createIssueAt(new Date(Date.now())),
+    exp: createExpiry('1m'),  
+    iss: "server-x",
+    sub: "testing"
+}
+
+try {
+    const token = signJwt(claims, { name: "John Doe" }, secret, { alg: "RS256" }); // Unsupported algorithm
+} catch (error) {
+    if (error instanceof BadJwtHeader) {
+        console.error("Error: Unsupported signing algorithm.");
+    } else {
+        console.error("Unexpected error:", error);
+    }
+}
+```
+
+---
+
+### 2. `verifyJwt<T extends Record<string, string> & Object>(jwt: string, secret: string): JwtClaim & T`
+
+Verifies a JWT and decodes its claims, including both standard JWT claims (like `iat`, `exp`, `iss`) and any custom claims included in the token.
+
+#### Example Usage
+
+```ts
+import { verifyJwt } from "@d3vtool/utils";
+
+// Example token (replace with a real token)
+const jwt = "your.jwt.token";
+const secret = "itsasecret";
+
+// Verify the JWT
+const verifiedClaims = verifyJwt(jwt, secret);
+console.log(verifiedClaims); // Decoded claims, including standard and custom claims
+```
+
+#### Error Handling
+
+The `verifyJwt` function may throw the following errors:
+
+1. **DirtyJwtSignature**: If the JWT signature doesn't match or is invalid.
+2. **ExpiredJwt**: If the token has expired (based on the `exp` claim).
+3. **InvalidJwt**: If the token is malformed or cannot be decoded properly.
+
+```ts
+import { verifyJwt } from "@d3vtool/utils";
+
+const jwt = "your.jwt.token";
+const secret = "itsasecret";
+
+try {
+    const verifiedClaims = verifyJwt(jwt, secret);
+    console.log(verifiedClaims);
+} catch (error) {
+    if (error instanceof DirtyJwtSignature) {
+        console.error("Error: JWT signature is invalid or has been tampered with.");
+    } else if (error instanceof ExpiredJwt) {
+        console.error("Error: JWT has expired.");
+    } else if (error instanceof InvalidJwt) {
+        console.error("Error: JWT is malformed or cannot be decoded.");
+    } else {
+        console.error("Unexpected error:", error);
+    }
+}
+```

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",  // or "ES6", "ES2017", etc.
     "module": "ESNext",
+    "moduleResolution": "node",  // or "nodenext" for newer Node.js versions
     "declaration": true,
     "outDir": "./dist",
     "rootDir": "src/utils",
