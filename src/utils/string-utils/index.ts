@@ -18,7 +18,8 @@ export class StringUtils {
     }
 
     public static toSnakeCase(input: string): string {
-        const snakeCased = input.replace(/[-_\s]+/g, "_").toLowerCase();
+        const camelCaseHandled = input.replace(/([a-z])([A-Z])/g, "$1_$2");
+        const snakeCased = camelCaseHandled.replace(/[-_\s]+/g, "_").toLowerCase();
 
         return snakeCased;
     }
@@ -40,31 +41,33 @@ export class StringUtils {
     }
 
     public static toPascalCase(input: string): string {
-        const replacedText = input.replace(/[-_\s]+/g, " ");
+        const camelCaseHandled = input.replace(/([a-z])([A-Z])/g, "$1 $2");
+        const replacedText = camelCaseHandled.replace(/[-_\s]+/g, " ");
  
         const words = replacedText.split(" ");
 
         const pascalCased = words.map(word => {
-            return `${word.charAt(0).toUpperCase()}${word.slice(1, ).toLowerCase()}`;
+            return word.replace(/(^[a-z])/g, (match) => match.toUpperCase());
         }).join("");
 
         return pascalCased;
     }
 
     public static toKebabCase(input: string): string {
-        const kebabCased = input.replace(/[-_\s]+/g, "-").toLowerCase();
+        const camelCaseHandled = input.replace(/([a-z])([A-Z])/g, "$1-$2");        
+        const kebabCased = camelCaseHandled.replace(/[-_\s]+/g, "-").toLowerCase();
  
         return kebabCased;
     }
 
     public static isUpperCase(input: string): boolean {
-        if(!(input.length === 1)) return false;
+        if(!(input.length === 1) || !isNaN(+input)) return false;
 
         return (input === input.toUpperCase());
     }
     
     public static isLowerCase(input: string): boolean {
-        if(!(input.length === 1)) return false;
+        if(!(input.length === 1) || !isNaN(+input)) return false;
     
         return (input === input.toLowerCase());
     }

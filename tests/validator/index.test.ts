@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Validator } from "../dist";
+import { Validator } from "../../dist";
 
 describe("String Validator", () => {
 
