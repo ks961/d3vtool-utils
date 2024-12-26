@@ -261,10 +261,10 @@ function b64UrlToUtf8(b64String: string) {
     }
 }
 
-function parseJwtSegment(
+function parseJwtSegment<R>(
     value: string,
     segment: string,
-) {
+): R {
     try {
         return JSON.parse(value);
     } catch {
@@ -320,7 +320,7 @@ export function verifyJwt<T extends Record<string, string> & Object>(
 
     
     const serializedHeader = b64UrlToUtf8(base64EncodedHeader);
-    const decodedHeader = parseJwtSegment(serializedHeader, "Header");
+    const decodedHeader = parseJwtSegment<JwtHeader>(serializedHeader, "Header");
 
     if(!AcceptedSigningAlgo.has(decodedHeader.alg)) {
         throw new BadJwtHeader(`Invalid JWT Header: Unsupported signing algorithm "${decodedHeader.alg}"`)
@@ -328,7 +328,7 @@ export function verifyJwt<T extends Record<string, string> & Object>(
 
 
     const serializedPayload = b64UrlToUtf8(base64EncodedPayload);
-    const decodedPayload = parseJwtSegment(serializedPayload, "Payload");
+    const decodedPayload = parseJwtSegment<(JwtClaim & T)>(serializedPayload, "Payload");
 
     if(Date.now() > decodedPayload.exp) {
         throw new ExpiredJwt("Expired JWT: Token has expired.");
