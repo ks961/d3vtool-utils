@@ -13,13 +13,13 @@ You can install the package using npm or yarn:
 ### npm
 
 ```bash
-npm install @d3vtool/hooks
+npm install @d3vtool/utils
 ```
 
 ### yarn
 
 ```bash
-yarn add @d3vtool/hooks
+yarn add @d3vtool/utils
 ```
 
 ## Validator Examples
