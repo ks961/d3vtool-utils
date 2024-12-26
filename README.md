@@ -332,7 +332,7 @@ console.log(alternateCasing); // "HeLlO wOrLd"
 
 ## JWT Utility Examples
 
-### 1. `signJwt(claims: JwtClaim, customClaims: T, secret: string, options: JwtOptions = { alg: "HS256" }): string`
+### 1. `signJwt`
 
 Signs a JWT (JSON Web Token) with the provided claims, custom claims, secret key, and options.
 
@@ -464,7 +464,7 @@ try {
 
 ---
 
-### 2. `verifyJwt<T extends Record<string, string> & Object>(jwt: string, secret: string): JwtClaim & T`
+### 2. `verifyJwt`
 
 Verifies a JWT and decodes its claims, including both standard JWT claims (like `iat`, `exp`, `iss`) and any custom claims included in the token.
 
