@@ -362,41 +362,6 @@ const token = signJwt(claims, customClaims, secret);
 console.log(token); // Signed JWT token as a string
 ```
 
-#### Error Handling
-
-The `signJwt` function may throw an error if the signing algorithm specified in `options` is not supported. For example:
-
-```ts
-import { signJwt, createIssueAt, createExpiry } from "@d3vtool/utils";
-
-const claims = {
-    aud: "http://localhost:4000",
-    iat: createIssueAt(new Date(Date.now())),
-    exp: createExpiry("1h"),
-    iss: "server-x",
-    sub: "user123"
-};
-
-const customClaims = {
-    role: "admin",
-    name: "John Doe"
-};
-
-const secret = "itsasecret";
-
-// Attempt to sign the JWT with an unsupported algorithm
-try {
-    const token = signJwt(claims, customClaims, secret, { alg: "HS512" });
-    console.log(token);
-} catch (error) {
-    if (error instanceof BadJwtHeader) {
-        console.error(`Error: Unsupported signing algorithm`);
-    } else {
-        console.error(`Unexpected error:`, error);
-    }
-}
-```
-
 ---
 
 ### Supported Algorithms for JWT Signing
