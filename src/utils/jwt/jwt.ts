@@ -45,6 +45,7 @@ export type IssuedAt = Branded<number, "IssuedAt">;
  * @example
  * // Example usage: creating an 'issued at' timestamp from a specific date
  * const issuedAt = createIssueAt(new Date('2024-01-01T00:00:00Z'));
+ * const issuedAt = createIssueAt(new Date('2024-01-01T00:00:00Z'));
  * console.log(issuedAt); // The timestamp for January 1, 2024
  */
 export function createIssueAt(iat: Date): IssuedAt {
