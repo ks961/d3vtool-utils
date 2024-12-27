@@ -5,6 +5,7 @@ A collection of utility functions designed to simplify common tasks in your appl
 - [**Validator**](#validator-examples)
 - [**StringUtils**](#stringutils-examples)
 - [**JWT Utility**](#jwt-utility-examples)
+- [**MimeType Utility**](#mime-type-utility-examples)
 
 ## Installation
 
@@ -476,3 +477,36 @@ try {
     }
 }
 ```
+
+---
+
+## MIME Type Utility Examples
+
+### 1. `getMimeType`
+
+Retrieves the MIME type for a given file extension.
+
+#### Example Usage
+
+```ts
+import { getMimeType } from "@d3vtool/utils";
+
+const extension1 = "html"; // Example file extension
+const extension2 = "jpg";  // Example file extension
+const extension3 = "md";   // Example file extension
+
+// Get MIME type for the given file extensions
+const mimeType1 = getMimeType(extension1); // Returns the MIME type for HTML, e.g. "text/html"
+const mimeType2 = getMimeType(extension2); // Returns the MIME type for JPG, e.g. "image/jpeg"
+const mimeType3 = getMimeType(extension3); // Returns the MIME type for Markdown, e.g. "text/markdown"
+
+// Fallback to default MIME type for unsupported extensions
+const unknownMimeType = getMimeType("unknown"); // Returns the default MIME type "text/plain"
+
+console.log(mimeType1); // "text/html"
+console.log(mimeType2); // "image/jpeg"
+console.log(mimeType3); // "text/markdown"
+console.log(unknownMimeType); // "text/plain"
+```
+
+This package is open-source and licensed under the [MIT License](LICENSE).

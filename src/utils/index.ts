@@ -11,6 +11,7 @@ import {
     createExpiry,
     createIssueAt,
 } from "./jwt/index";
+import {  getMimeType } from "./mime";
 
 export { 
     type VInfer,
@@ -18,6 +19,7 @@ export {
     verifyJwt,
     Validator,
     StringUtils,
+    getMimeType,
     createExpiry,
     createIssueAt,
     ValidationError, 
