@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { Branded } from "../helpers";
-import { BadJwtClaimObj, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } from "./errors";
+import { BadJwtClaim, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } from "./errors";
 
 export type JwtHeader = {
     alg: "HS256" | "HS384" | "HS512",
@@ -22,8 +22,8 @@ const Time_Multiplier: Record<string, number> = {
     y: 365 * 24 * 60 * 60 * 1000
 }
 
-type Expiry = Branded<number, "Expiry">;
-type IssuedAt = Branded<number, "IssuedAt">;
+export type Expiry = Branded<number, "Expiry">;
+export type IssuedAt = Branded<number, "IssuedAt">;
 
 /**
  * Converts a given `Date` object into an `IssuedAt` timestamp (milliseconds since the Unix epoch).
@@ -221,7 +221,7 @@ export function signJwt<T extends Record<string, string> & Object>(
 
     const missingPropIndex = RequiredClaimProps.findIndex(prop => !(prop in claims));
     if(missingPropIndex >= 0) {
-        throw new BadJwtClaimObj(`Invalid Claim: The claim object is missing the required property '${RequiredClaimProps[missingPropIndex]}`);
+        throw new BadJwtClaim(`Invalid Claim: The claim object is missing the required property '${RequiredClaimProps[missingPropIndex]}`);
     }
 
     const base64Payload = Buffer.from(JSON.stringify({
@@ -288,9 +288,10 @@ function parseJwtSegment<R>(
  * 
  * @returns The decoded payload, including both the standard JWT claims (e.g., `iat`, `exp`, `iss`) and any custom claims that were passed during signing.
  * 
- * @throws {BadJwtSignature} If the JWT signature does not match or the JWT is otherwise invalid.
  * @throws {ExpiredJwt} If the JWT is expired (based on the `exp` claim).
  * @throws {InvalidJwt} If the JWT is malformed or cannot be decoded properly.
+ * @throws {BadJwtHeader} If the JWT is malformed or cannot be decoded properly.
+ * @throws {DirtyJwtSignature} If the JWT signature does not match or the JWT is otherwise invalid.
  * 
  * @example
  * // Example usage: verifying a JWT and accessing its claims

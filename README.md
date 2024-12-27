@@ -381,7 +381,7 @@ import { signJwt, createIssueAt, createExpiry } from "@d3vtool/utils";
 
 const claims = {
     aud: "http://localhost:4000",
-    iat: createIssueAt(new Date(Date.now())),
+    iat: createIssueAt(new Date()),
     exp: createExpiry("2h"), // 2hr from now
     iss: "server-x",
     sub: "user123"

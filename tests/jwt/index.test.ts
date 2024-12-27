@@ -1,5 +1,5 @@
 import { signJwt, verifyJwt, createExpiry, createIssueAt } from "../../src/utils/jwt/index"; 
-import { BadJwtClaimObj, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } from "../../src/utils/jwt/errors";
+import { BadJwtClaim, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } from "../../src/utils/jwt/errors";
 import { describe, it, expect, vi } from 'vitest';
 
 const secret = 'itsasecret';
@@ -15,7 +15,7 @@ describe('JWT Tests', () => {
     it('should sign and verify JWT with default algorithm (HS256)', () => {
         const claims = {
             aud: "http://localhost:4000",
-            iat: createIssueAt(new Date(Date.now())),
+            iat: createIssueAt(new Date()),
             exp: createExpiry("1h"),
             iss: "server-x",
             sub: "user123"
@@ -35,7 +35,7 @@ describe('JWT Tests', () => {
     it('should sign and verify JWT with custom algorithm (HS384)', () => {
         const claims = {
             aud: "http://localhost:4000",
-            iat: createIssueAt(new Date(Date.now())),
+            iat: createIssueAt(new Date()),
             exp: createExpiry("1h"),
             iss: "server-x",
             sub: "user123"
@@ -56,7 +56,7 @@ describe('JWT Tests', () => {
         try {
             const claims = {
                 aud: "http://localhost:4000",
-                iat: createIssueAt(new Date(Date.now())),
+                iat: createIssueAt(new Date()),
                 exp: createExpiry("1h"),
                 iss: "server-x",
                 sub: "user123"
@@ -75,7 +75,7 @@ describe('JWT Tests', () => {
     it('should throw ExpiredJwt for expired token', async () => {
         const claims = {
             aud: "http://localhost:4000",
-            iat: createIssueAt(new Date(Date.now())),
+            iat: createIssueAt(new Date()),
             exp: createExpiry("1s"), // Expired immediately
             iss: "server-x",
             sub: "user123"
@@ -109,7 +109,7 @@ describe('JWT Tests', () => {
     it('should throw BadJwtSignature for tampered token', () => {
         const claims = {
             aud: "http://localhost:4000",
-            iat: createIssueAt(new Date(Date.now())),
+            iat: createIssueAt(new Date()),
             exp: createExpiry("1h"),
             iss: "server-x",
             sub: "user123"
@@ -132,7 +132,7 @@ describe('JWT Tests', () => {
     it('should verify token with valid expiry', () => {
         const claims = {
             aud: "http://localhost:4000",
-            iat: createIssueAt(new Date(Date.now())),
+            iat: createIssueAt(new Date()),
             exp: createExpiry("1h"),
             iss: "server-x",
             sub: "user123"
@@ -148,11 +148,11 @@ describe('JWT Tests', () => {
     });
 
     // 8. Token with missing `exp` claim should throw error
-    it('should throw BadJwtClaimObj for missing `exp` claim', () => {
+    it('should throw BadJwtClaim for missing `exp` claim', () => {
         try {
             const claims = {
                 aud: "http://localhost:4000",
-                iat: createIssueAt(new Date(Date.now())),
+                iat: createIssueAt(new Date()),
                 iss: "server-x",
                 sub: "user123"
             };
@@ -160,9 +160,9 @@ describe('JWT Tests', () => {
 
             // @ts-ignore
             signJwt(claims, customClaims, secret); // Missing `exp`
-            throw new Error("Expected BadJwtClaimObj error");
+            throw new Error("Expected BadJwtClaim error");
         } catch (error) {
-            expect(error).toBeInstanceOf(BadJwtClaimObj);
+            expect(error).toBeInstanceOf(BadJwtClaim);
         }
     });
 
@@ -170,7 +170,7 @@ describe('JWT Tests', () => {
     it('should add and verify custom claims successfully', () => {
         const claims = {
             aud: "http://localhost:4000",
-            iat: createIssueAt(new Date(Date.now())),
+            iat: createIssueAt(new Date()),
             exp: createExpiry("1h"),
             iss: "server-x",
             sub: "user123"
@@ -188,7 +188,7 @@ describe('JWT Tests', () => {
     it('should handle empty custom claims properly', () => {
         const claims = {
             aud: "http://localhost:4000",
-            iat: createIssueAt(new Date(Date.now())),
+            iat: createIssueAt(new Date()),
             exp: createExpiry("1h"),
             iss: "server-x",
             sub: "user123"

@@ -1,5 +1,3 @@
-
-
 export class InvalidJwt extends Error {
     constructor(message: string) {
         super(message);
@@ -28,7 +26,7 @@ export class BadJwtHeader extends Error {
     }
 }
 
-export class BadJwtClaimObj extends Error {
+export class BadJwtClaim extends Error {
     constructor(message: string) {
         super(message);
         this.name = "BadJwtClaim";
