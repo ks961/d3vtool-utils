@@ -207,7 +207,8 @@ async function signWithSecret(
  * 
  * This function creates a JWT token by encoding the claims (standard and custom), 
  * signing it with the provided secret key using the specified algorithm, and returning the resulting 
- * token as a string. This JWT can then be used for authentication or authorization purposes.
+ * token as a string. The operation is asynchronous and returns a promise that resolves to the signed token.
+ * This JWT can then be used for authentication or authorization purposes.
  * 
  * The `claims` parameter represents standard JWT claims (such as `iat`, `exp`, `iss`, etc.). The `customClaims` 
  * allows you to include additional, user-defined claims. The `secret` is used to sign the token and ensure its integrity. 
@@ -223,13 +224,13 @@ async function signWithSecret(
  * @param secret - The secret key used to sign the JWT. This should be kept secure and never exposed.
  * @param options - Options for signing the JWT. Currently, this only supports specifying the `alg` (signing algorithm), defaulting to `"HS256"`.
  * 
- * @returns A signed JWT as a string, consisting of the base64url-encoded header, payload, and signature.
+ * @returns A promise that resolves to a signed JWT as a string, consisting of the base64url-encoded header, payload, and signature.
  * 
  * @throws {BadJwtHeader} If an unsupported signing algorithm is specified in the `options` parameter.
  * 
  * @example
  * // Example usage: signing a JWT with standard claims and a custom claim
- * const jwt = signJwt(
+ * const jwt = await signJwt(
  *   {
  *     aud: "http://localhost:4000",
  *     iat: createIssueAt(new Date(Date.now())),
@@ -244,10 +245,10 @@ async function signWithSecret(
  * 
  * @example
  * // Example usage: signing a JWT with custom signing algorithm (HS512)
- * const jwt = signJwt(
+ * const jwt = await signJwt(
  *   {
  *     aud: "http://localhost:4000",
- *     iat: createIssueAt(new Date(Date.now())),
+ *     iat: createIssueAt(new Date()),
  *     exp: createExpiry("2h"),
  *     iss: "server-x",
  *     sub: "user"
@@ -310,10 +311,28 @@ function isValidJwt(jwt: string): ValidJwt  {
     return jwtArray as ValidJwt;
 }
 
-function b64UrlToUtf8(b64String: string) {
-    const b64 = Buffer.from(b64String, "base64url").toString("base64");
+function base64UrlToBase64(base64Url: string) {
+    let base64 = base64Url
+            .replace(/-/g, '+')
+            .replace(/_/g, '/')
+            .replace(/\s/g, '');
+
+        while (base64.length % 4) {
+            base64 += '=';
+        }
+
+        return base64;
+}
+
+function b64UrlToUtf8(base64Url: string): string {
     try {
-        return atob(b64);
+        return isNodeEnv
+            ? Buffer.from(base64Url, 'base64url').toString('utf8')
+            : new TextDecoder('utf8').decode(
+                Uint8Array.from(atob(
+                    base64UrlToBase64(base64Url)
+                ), c => c.charCodeAt(0)));
+        
     } catch {
         throw new InvalidJwt("Base64 decoding failed: Invalid Base64 URL string.")
     }
