@@ -191,8 +191,8 @@ async function signWithSecret(
                 //@ts-expect-error
                 return Deno.crypto;
             case isVercelEdgeRuntimeEnv:
-                //@ts-expect-error
-                return EdgeRuntime.crypto;
+                //@ts-ignore
+                return crypto;
             case isCloudflareWorkersEnv:
                 return self.crypto;
             case isNodeEnv:
