@@ -358,7 +358,7 @@ const customClaims = {
 const secret = "itsasecret";
 
 // Sign the JWT with default algorithm (HS256)
-const token = signJwt(claims, customClaims, secret);
+const token = await signJwt(claims, customClaims, secret);
 
 console.log(token); // Signed JWT token as a string
 ```
@@ -396,7 +396,7 @@ const customClaims = {
 const secret = "itsasecret";
 
 // Sign the JWT with HS384 algorithm
-const token = signJwt(claims, customClaims, secret, { alg: "HS384" });
+const token = await signJwt(claims, customClaims, secret, { alg: "HS384" });
 
 console.log(token); // Signed JWT token using HS384
 ```
@@ -411,14 +411,14 @@ import { signJwt, createIssueAt, createExpiry } from "@d3vtool/utils";
 const secret = "itsasecret";
 const claims = {
     aud: "http://localhost:4000",
-    iat: createIssueAt(new Date(Date.now())),
+    iat: createIssueAt(new Date()),
     exp: createExpiry('1m'),  
     iss: "server-x",
     sub: "testing"
 }
 
 try {
-    const token = signJwt(claims, { name: "John Doe" }, secret, { alg: "RS256" }); // Unsupported algorithm
+    const token = await signJwt(claims, { name: "John Doe" }, secret, { alg: "RS256" }); // Unsupported algorithm
 } catch (error) {
     if (error instanceof BadJwtHeader) {
         console.error("Error: Unsupported signing algorithm.");
@@ -444,7 +444,7 @@ const jwt = "your.jwt.token";
 const secret = "itsasecret";
 
 // Verify the JWT
-const verifiedClaims = verifyJwt(jwt, secret);
+const verifiedClaims = await verifyJwt(jwt, secret);
 console.log(verifiedClaims); // Decoded claims, including standard and custom claims
 ```
 
@@ -463,7 +463,7 @@ const jwt = "your.jwt.token";
 const secret = "itsasecret";
 
 try {
-    const verifiedClaims = verifyJwt(jwt, secret);
+    const verifiedClaims = await verifyJwt(jwt, secret);
     console.log(verifiedClaims);
 } catch (error) {
     if (error instanceof DirtyJwtSignature) {
