@@ -9,7 +9,7 @@ const isDenoEnv = typeof Deno !== 'undefined' && !!Deno.crypto;
 //@ts-expect-error
 const isElectronEnv = typeof process !== 'undefined' && process.type === 'browser';
 //@ts-expect-error
-const isVercelEdgeRuntimeEnv = typeof EdgeRuntime !== 'undefined';
+const isEdgeRuntimeEnv = typeof EdgeRuntime !== 'undefined';
 
 interface WebCrypto {
     subtle: SubtleCrypto;
@@ -160,7 +160,7 @@ function arrayBufferToBase64Url(buffer: ArrayBuffer): string {
             case isBrowserEnv:
             case isDenoEnv:
             case isElectronEnv:
-            case isVercelEdgeRuntimeEnv:
+            case isEdgeRuntimeEnv:
             case isCloudflareWorkersEnv:
                 return btoa(String.fromCharCode(...new Uint8Array(buffer)));
             case isNodeEnv:
@@ -188,9 +188,9 @@ async function signWithSecret(
             case isElectronEnv:
                 return window.crypto;
             case isDenoEnv:
-                //@ts-expect-error
+                //@ts-ignore
                 return Deno.crypto;
-            case isVercelEdgeRuntimeEnv:
+            case isEdgeRuntimeEnv:
                 //@ts-ignore
                 return crypto;
             case isCloudflareWorkersEnv:
@@ -362,7 +362,7 @@ function decodeBase64Url(base64Url: string): string {
         (c) => c.charCodeAt(0)
     );
 
-    if (isBrowserEnv || isDenoEnv || isElectronEnv || isVercelEdgeRuntimeEnv || isCloudflareWorkersEnv) {
+    if (isBrowserEnv || isDenoEnv || isElectronEnv || isEdgeRuntimeEnv || isCloudflareWorkersEnv) {
         return new TextDecoder('utf8').decode(uint8Array);
     }
 
