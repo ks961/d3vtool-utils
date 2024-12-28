@@ -56,15 +56,15 @@ export function createIssueAt(iat: Date): IssuedAt {
  * Converts a time span string (e.g., "5s", "3m", "2h") to its equivalent duration in milliseconds.
  * The time span string should consist of a numeric value followed by a unit (e.g., "s", "m", "h", "d", "y").
  * 
- * @param timeSpan - A string representing a time span, where the numeric value is followed by a unit
+ * @param duration - A string representing a time span, where the numeric value is followed by a unit
  * (e.g., "5s" for 5 seconds, "3m" for 3 minutes, etc.).
  * Supported units: "s" (seconds), "m" (minutes), "h" (hours), "d" (days), "y" (years).
  * 
  * @returns The equivalent time span in milliseconds. 
  */
-export function getDurationInMillisec(timeSpan: Time): number {
-    const time = parseInt(timeSpan);
-    const unit = timeSpan .charAt(timeSpan.length - 1);
+export function getDurationInMillisec(duration: Time): number {
+    const time = parseInt(duration);
+    const unit = duration .charAt(duration.length - 1);
 
     return time * Time_Multiplier[unit];
 }
