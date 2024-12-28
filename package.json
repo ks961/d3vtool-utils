@@ -1,6 +1,6 @@
 {
   "name": "@d3vtool/utils",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "type": "module",
   "description": "A collection of utility functions designed to simplify common tasks in your application.",
   "main": "dist/index.js",
