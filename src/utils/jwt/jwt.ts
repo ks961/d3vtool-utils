@@ -3,13 +3,13 @@ import { BadJwtClaim, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } 
 
 const isNodeEnv = typeof process !== 'undefined' && process.versions && !!process.versions.node;
 const isBrowserEnv = typeof window !== 'undefined' && typeof window.crypto !== 'undefined';
-const isCloudflareWorkersEnv = typeof self !== 'undefined' && self.crypto && !!self.crypto.subtle;
+//@ts-expect-error
+const isEdgeRuntimeEnv = typeof EdgeRuntime !== 'undefined';
+const isCloudflareWorkersEnv = !isEdgeRuntimeEnv && (typeof self !== 'undefined' && self.crypto && !!self.crypto.subtle);
 //@ts-expect-error
 const isDenoEnv = typeof Deno !== 'undefined' && !!Deno.crypto;
 //@ts-expect-error
 const isElectronEnv = typeof process !== 'undefined' && process.type === 'browser';
-//@ts-expect-error
-const isEdgeRuntimeEnv = typeof EdgeRuntime !== 'undefined';
 
 interface WebCrypto {
     subtle: SubtleCrypto;
