@@ -1,8 +1,8 @@
 import { Branded } from "../helpers";
 import { BadJwtClaim, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } from "./errors";
 
+const isBrowserEnv = typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues!;
 const isNodeEnv = typeof process !== 'undefined' && process.versions != null && process.versions.node != null;
-
 interface WebCrypto {
     subtle: SubtleCrypto;
     getRandomValues: (array: Uint8Array) => Uint8Array;
@@ -171,14 +171,18 @@ async function signWithSecret(
     secret: string
 ): Promise<string> {
 
-    const crypto = isNodeEnv ? 
+    const localCrypto = isNodeEnv ? 
         (require("crypto").webcrypto as WebCrypto) : 
-            window.crypto; 
+            isBrowserEnv ? window.crypto : (crypto) ? crypto : null;
+           
+    if(localCrypto === null) {
+        throw new Error("Error: Unsupported Runtime");
+    }
  
     const encoder = new TextEncoder();
     const key = encoder.encode(secret);
     
-    const cryptoKey = await crypto.subtle.importKey(
+    const cryptoKey = await localCrypto.subtle.importKey(
         "raw",
         key,
         {
@@ -191,7 +195,7 @@ async function signWithSecret(
 
     const encodedMsg = encoder.encode(encodedHP);
 
-    const sign = await crypto.subtle.sign(
+    const sign = await localCrypto.subtle.sign(
         "HMAC",
         cryptoKey,
         encodedMsg
