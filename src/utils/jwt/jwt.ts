@@ -60,10 +60,10 @@ export function createIssueAt(iat: Date): IssuedAt {
  * 
  * @returns The equivalent time in milliseconds.
  */
-export function getDurationInMillisec(
-    time: number, 
-    unit: string
-): number {
+export function getDurationInMillisec(expiry: Time): number {
+    const time = parseInt(expiry);
+    const unit = expiry.charAt(expiry.length - 1);
+
     return time * Time_Multiplier[unit];
 }
 
@@ -93,10 +93,9 @@ export function getDurationInMillisec(
  * const expiry = createExpiry("1d");
  */
 export function createExpiry(expiry: Time): Expiry {
-    const time = parseInt(expiry);
-    const unit = expiry.charAt(expiry.length - 1);
+    const duration = getDurationInMillisec(expiry);
 
-    const expiryDate = new Date(Date.now() + getDurationInMillisec(time, unit));
+    const expiryDate = new Date(Date.now() + duration);
     
     return expiryDate.getTime() as Expiry;
 }
