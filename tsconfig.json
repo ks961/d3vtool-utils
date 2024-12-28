@@ -5,13 +5,13 @@
     "moduleResolution": "bundler",
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "src",
+    "rootDir": "src/utils",
     "strict": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/utils/**/*"],
   "exclude": ["node_modules", "dist"]
 }
