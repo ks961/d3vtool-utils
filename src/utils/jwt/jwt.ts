@@ -1,6 +1,12 @@
-import crypto from "crypto";
 import { Branded } from "../helpers";
 import { BadJwtClaim, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } from "./errors";
+
+const isNodeEnv = typeof process !== 'undefined' && process.versions != null && process.versions.node != null;
+
+interface WebCrypto {
+    subtle: SubtleCrypto;
+    getRandomValues: (array: Uint8Array) => Uint8Array;
+}
 
 export type JwtHeader = {
     alg: "HS256" | "HS384" | "HS512",
@@ -142,22 +148,56 @@ const AcceptedSigningAlgo: Set<JwtHeader["alg"]> = new Set([
 ]);
 
 const algoMap: Record<JwtHeader["alg"], string> = {
-    "HS256": 'sha256',
-    "HS384": 'sha384',
-    "HS512": 'sha512',
+    "HS256": 'SHA-256',
+    "HS384": 'SHA-384',
+    "HS512": 'SHA-512',
 }
 
-function signWithSecret(
+function arrayBufferToBase64Url(buffer: ArrayBuffer): string {
+
+    const base64 = isNodeEnv 
+        ? Buffer.from(buffer).toString('base64')
+        : btoa(String.fromCharCode(...new Uint8Array(buffer)));
+
+    return base64
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+}
+
+async function signWithSecret(
     algorithm: JwtHeader["alg"],
     encodedHP: string, 
     secret: string
-) {
+): Promise<string> {
 
-    const hmac = crypto.createHmac(algoMap[algorithm], secret)
-        .update(encodedHP);
-
+    const crypto = isNodeEnv ? 
+        (require("crypto").webcrypto as WebCrypto) : 
+            window.crypto; 
+ 
+    const encoder = new TextEncoder();
+    const key = encoder.encode(secret);
     
-    const signature = hmac.digest('base64url');
+    const cryptoKey = await crypto.subtle.importKey(
+        "raw",
+        key,
+        {
+            name: "HMAC",
+            hash: { name: algoMap[algorithm] }
+        },
+        false,
+        ["sign", "verify"]
+    );
+
+    const encodedMsg = encoder.encode(encodedHP);
+
+    const sign = await crypto.subtle.sign(
+        "HMAC",
+        cryptoKey,
+        encodedMsg
+    );
+    
+    const signature = arrayBufferToBase64Url(sign);
 
     return signature;
 }
@@ -218,14 +258,14 @@ function signWithSecret(
  * );
  * console.log(jwt); // The signed JWT token with HS512 algorithm
  */
-export function signJwt<T extends Record<string, string> & Object>(
+export async function signJwt<T extends Record<string, string> & Object>(
     claims: JwtClaim, 
     customClaims: T,
     secret: string,
     options: JwtOptions = {
         alg: "HS256",
     },
-): string {
+): Promise<string> {
     
     if(!AcceptedSigningAlgo.has(options.alg)) {
         throw new BadJwtHeader(`Bad Header: Unsupported signing algorithm "${options.alg}"`);
@@ -249,7 +289,7 @@ export function signJwt<T extends Record<string, string> & Object>(
 
     const base64EncodedHP = `${base64Header}.${base64Payload}`;
     
-    const base64EncodedSig = signWithSecret(
+    const base64EncodedSig = await signWithSecret(
         options.alg,
         base64EncodedHP, 
         secret
@@ -327,10 +367,10 @@ function parseJwtSegment<R>(
  * );
  * console.log(verifiedPayload.name); // Access the custom `name` claim from the token
  */
-export function verifyJwt<T extends Record<string, string> & Object>(
+export async function verifyJwt<T extends Record<string, string> & Object>(
     jwt: string,
     secret: string
-): JwtClaim & T {
+): Promise<JwtClaim & T> {
     const [
         base64EncodedHeader, 
         base64EncodedPayload,
@@ -355,7 +395,7 @@ export function verifyJwt<T extends Record<string, string> & Object>(
 
     const base64EncodedHP = `${base64EncodedHeader}.${base64EncodedPayload}`;
 
-    const b64signature = signWithSecret(
+    const b64signature = await signWithSecret(
         decodedHeader.alg,
         base64EncodedHP,
         secret

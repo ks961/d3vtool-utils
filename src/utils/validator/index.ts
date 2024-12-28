@@ -5,7 +5,7 @@ import { OptionalValidator } from "./OptionalValidator";
 import { ObjectType, ObjectValidator } from "./ObjectValidator";
 import { ValidationError, ObjectValidationError } from "./error";
 
-type VInfer<T> = T extends ObjectValidator<infer U>
+export type VInfer<T> = T extends ObjectValidator<infer U>
   ? { 
       [Key in keyof U as VInfer<U[Key]> extends OptionalValidator<infer _> ? Key : never]?: VInfer<U[Key]> extends OptionalValidator<infer X> ? VInfer<X> : VInfer<U[Key]>
     } & {
@@ -35,7 +35,6 @@ class Validator {
 }
 
 export {
-    VInfer,
     Validator,
     ValidationError,
     ObjectValidationError
