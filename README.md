@@ -5,6 +5,14 @@ A collection of utility functions designed to simplify common tasks in your appl
 - [**Validator**](#validator-examples)
 - [**StringUtils**](#stringutils-examples)
 - [**JWT Utility**](#jwt-utility-examples)
+  - **Supported Runtimes**
+    - Bun
+    - Node
+    - Deno
+    - Browser
+    - Electron
+    - Cloudflare Workers
+    - Vercel Edge Runtime
 - [**MimeType Utility**](#mime-type-utility-examples)
 
 ## Installation
