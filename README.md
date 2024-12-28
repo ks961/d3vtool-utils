@@ -5,7 +5,7 @@ A collection of utility functions designed to simplify common tasks in your appl
 - [**Validator**](#validator-examples)
 - [**StringUtils**](#stringutils-examples)
 - [**JWT Utility**](#jwt-utility-examples)
-  - **Runtimes Support**
+  - **Supported Runtimes**
     - Bun
     - Node
     - Deno
