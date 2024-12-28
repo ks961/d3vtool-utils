@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Validator } from "../../dist";
+import { Validator } from "../../src/utils/index";
 
 describe("String Validator", () => {
 
@@ -178,9 +178,7 @@ describe("String Validator", () => {
     
             const localTestStr = "abcdefghij";
     
-            const errors = schema.validateSafely(localTestStr);
-            console.log(errors);
-            
+            const errors = schema.validateSafely(localTestStr);            
                     
             // expect(errors).toHaveLength(0);
     

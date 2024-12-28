@@ -1,8 +1,16 @@
 import { Branded } from "../helpers";
 import { BadJwtClaim, BadJwtHeader, DirtyJwtSignature, ExpiredJwt, InvalidJwt } from "./errors";
 
-const isBrowserEnv = typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues!;
-const isNodeEnv = typeof process !== 'undefined' && process.versions != null && process.versions.node != null;
+const isNodeEnv = typeof process !== 'undefined' && process.versions && !!process.versions.node;
+const isBrowserEnv = typeof window !== 'undefined' && typeof window.crypto !== 'undefined';
+const isCloudflareWorkersEnv = typeof self !== 'undefined' && self.crypto && !!self.crypto.subtle;
+//@ts-expect-error
+const isDenoEnv = typeof Deno !== 'undefined' && !!Deno.crypto;
+//@ts-expect-error
+const isElectronEnv = typeof process !== 'undefined' && process.type === 'browser';
+//@ts-expect-error
+const isVercelEdgeRuntimeEnv = typeof EdgeRuntime !== 'undefined';
+
 interface WebCrypto {
     subtle: SubtleCrypto;
     getRandomValues: (array: Uint8Array) => Uint8Array;
@@ -133,14 +141,6 @@ type JwtOptions = {
     alg: JwtHeader["alg"]
 }
 
-// async function generateECKeyPair() {
-//     const pair = await generateKeyPair('ec', {
-//         namedCurve: "P-256"
-//     });
-
-//     return pair;
-// }
-
 const AcceptedSigningAlgo: Set<JwtHeader["alg"]> = new Set([
     "HS256",
     "HS384",
@@ -155,9 +155,20 @@ const algoMap: Record<JwtHeader["alg"], string> = {
 
 function arrayBufferToBase64Url(buffer: ArrayBuffer): string {
 
-    const base64 = isNodeEnv 
-        ? Buffer.from(buffer).toString('base64')
-        : btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    const base64 = (() => {
+        switch(true) {
+            case isBrowserEnv:
+            case isDenoEnv:
+            case isElectronEnv:
+            case isVercelEdgeRuntimeEnv:
+            case isCloudflareWorkersEnv:
+                return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+            case isNodeEnv:
+                return Buffer.from(buffer).toString('base64');
+            default:
+                throw new Error('Base64 encoding not supported in this environment.'); 
+        }
+    })();
 
     return base64
         .replace(/\+/g, '-')
@@ -171,14 +182,26 @@ async function signWithSecret(
     secret: string
 ): Promise<string> {
 
-    const localCrypto = isNodeEnv ? 
-        (require("crypto").webcrypto as WebCrypto) : 
-            isBrowserEnv ? window.crypto : (crypto) ? crypto : null;
-           
-    if(localCrypto === null) {
-        throw new Error("Error: Unsupported Runtime");
-    }
- 
+    const localCrypto = (() => {
+        switch(true) {
+            case isBrowserEnv:
+            case isElectronEnv:
+                return window.crypto;
+            case isDenoEnv:
+                //@ts-expect-error
+                return Deno.crypto;
+            case isVercelEdgeRuntimeEnv:
+                //@ts-expect-error
+                return EdgeRuntime.crypto;
+            case isCloudflareWorkersEnv:
+                return self.crypto;
+            case isNodeEnv:
+                return require('crypto').webcrypto;
+            default:
+                throw new Error('Unsupported environment: Crypto API is not available.'); 
+        }
+      })() as WebCrypto;
+
     const encoder = new TextEncoder();
     const key = encoder.encode(secret);
     
@@ -276,21 +299,22 @@ export async function signJwt<T extends Record<string, string> & Object>(
         throw new BadJwtHeader(`Bad Header: Unsupported signing algorithm "${options.alg}"`);
     }
 
-    const base64Header = Buffer.from(JSON.stringify({
+    const encoder = new TextEncoder();
+    const base64Header = arrayBufferToBase64Url(encoder.encode(JSON.stringify({
         alg: options.alg,
         typ: "JWT",
-    }), 'utf8')
-        .toString("base64url");
+    })));
+
 
     const missingPropIndex = RequiredClaimProps.findIndex(prop => !(prop in claims));
     if(missingPropIndex >= 0) {
         throw new BadJwtClaim(`Invalid Claim: The claim object is missing the required property '${RequiredClaimProps[missingPropIndex]}`);
     }
 
-    const base64Payload = Buffer.from(JSON.stringify({
+    const base64Payload = arrayBufferToBase64Url(encoder.encode(JSON.stringify({
         ...claims,
         ...customClaims
-    }), 'utf8').toString("base64url");
+    })))
 
     const base64EncodedHP = `${base64Header}.${base64Payload}`;
     
@@ -328,18 +352,21 @@ function base64UrlToBase64(base64Url: string) {
         return base64;
 }
 
-function b64UrlToUtf8(base64Url: string): string {
-    try {
-        return isNodeEnv
-            ? Buffer.from(base64Url, 'base64url').toString('utf8')
-            : new TextDecoder('utf8').decode(
-                Uint8Array.from(atob(
-                    base64UrlToBase64(base64Url)
-                ), c => c.charCodeAt(0)));
-        
-    } catch {
-        throw new InvalidJwt("Base64 decoding failed: Invalid Base64 URL string.")
+function decodeBase64Url(base64Url: string): string {
+    if (isNodeEnv && typeof Buffer !== "undefined") {
+        return Buffer.from(base64Url, 'base64url').toString('utf8');
     }
+
+    const uint8Array = Uint8Array.from(
+        atob(base64UrlToBase64(base64Url)),
+        (c) => c.charCodeAt(0)
+    );
+
+    if (isBrowserEnv || isDenoEnv || isElectronEnv || isVercelEdgeRuntimeEnv || isCloudflareWorkersEnv) {
+        return new TextDecoder('utf8').decode(uint8Array);
+    }
+
+    throw new Error('Base64URL decoding not supported in this environment.');
 }
 
 function parseJwtSegment<R>(
@@ -394,6 +421,7 @@ export async function verifyJwt<T extends Record<string, string> & Object>(
     jwt: string,
     secret: string
 ): Promise<JwtClaim & T> {
+
     const [
         base64EncodedHeader, 
         base64EncodedPayload,
@@ -401,7 +429,7 @@ export async function verifyJwt<T extends Record<string, string> & Object>(
     ] = isValidJwt(jwt);
 
     
-    const serializedHeader = b64UrlToUtf8(base64EncodedHeader);
+    const serializedHeader = decodeBase64Url(base64EncodedHeader);
     const decodedHeader = parseJwtSegment<JwtHeader>(serializedHeader, "Header");
 
     if(!AcceptedSigningAlgo.has(decodedHeader.alg)) {
@@ -409,7 +437,7 @@ export async function verifyJwt<T extends Record<string, string> & Object>(
     }
 
 
-    const serializedPayload = b64UrlToUtf8(base64EncodedPayload);
+    const serializedPayload = decodeBase64Url(base64EncodedPayload);
     const decodedPayload = parseJwtSegment<(JwtClaim & T)>(serializedPayload, "Payload");
 
     if(Date.now() > decodedPayload.exp) {
