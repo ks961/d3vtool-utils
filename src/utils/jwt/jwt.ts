@@ -53,6 +53,22 @@ export function createIssueAt(iat: Date): IssuedAt {
 }
 
 /**
+ * Converts a time value to milliseconds based on the provided unit.
+ * 
+ * @param time - The numeric value representing the time to be converted.
+ * @param unit - The unit of time. Supported units are: "s", "m", "h", "d", "y".
+ * 
+ * @returns The equivalent time in milliseconds.
+ */
+export function getDurationInMillisec(
+    time: number, 
+    unit: string
+): number {
+    return time * Time_Multiplier[unit];
+}
+
+
+/**
  * Creates an expiry time based on the given time string.
  * The expiry is calculated as the current time plus the time duration specified in the `expiry` parameter.
  * 
@@ -80,7 +96,7 @@ export function createExpiry(expiry: Time): Expiry {
     const time = parseInt(expiry);
     const unit = expiry.charAt(expiry.length - 1);
 
-    const expiryDate = new Date(Date.now() + time * Time_Multiplier[unit]);
+    const expiryDate = new Date(Date.now() + getDurationInMillisec(time, unit));
     
     return expiryDate.getTime() as Expiry;
 }
