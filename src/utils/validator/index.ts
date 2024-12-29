@@ -2,7 +2,7 @@ import { SelfRefValidator } from "./SelfRefValidator";
 import { StringValidator } from "./StringValidator";
 import { NumberValidator } from "./NumberValidator";
 import { OptionalValidator } from "./OptionalValidator";
-import { ObjectType, ObjectValidator } from "./ObjectValidator";
+import { ObjectValidator } from "./ObjectValidator";
 import { ValidationError, ObjectValidationError } from "./error";
 
 export type VInfer<T> = T extends ObjectValidator<infer U>
@@ -27,8 +27,8 @@ class Validator {
         return new NumberValidator();
     }
     
-    static object<T>(
-        object: ObjectType<T>,
+    static object<T extends Object>(
+        object: T,
     ) {
         return new ObjectValidator(object);
     }

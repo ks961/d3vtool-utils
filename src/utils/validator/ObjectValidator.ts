@@ -2,13 +2,10 @@ import { SelfRefValidator } from "./SelfRefValidator";
 import { OptionalValidator } from "./OptionalValidator";
 import { ObjectValidationError, ValidationError } from "./error";
 
-export type ObjectType<T> = {[key in keyof T]: T[key]};
-
-
-export class ObjectValidator<T> {
-    #__object__: ObjectType<T>;
+export class ObjectValidator<T extends Object> {
+    #__object__: T;
     
-    constructor(object: ObjectType<T>) {
+    constructor(object: T) {
         this.#__object__ = object;
     }
 
