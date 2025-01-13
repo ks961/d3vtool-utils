@@ -5,8 +5,9 @@ import { RangeBounded, RegExpValidator } from "./types";
 
 export class NumberValidator implements RangeBounded {
 
-    #validators: RegExpValidator[] = [];
     #isOptional: boolean = false;
+    #toParseValue: boolean = false;
+    #validators: RegExpValidator[] = [];
 
     min(
         minimum: number,
@@ -110,6 +111,11 @@ export class NumberValidator implements RangeBounded {
         return this;
     }
 
+    parse() {
+        this.#toParseValue = true;
+        return this;
+    }
+
     equalsToField(
         propertyName: string, 
         errorMsg: string = "The provided value is invalid or does not meet the expected criteria."
@@ -140,7 +146,7 @@ export class NumberValidator implements RangeBounded {
         if(this.#isOptional && !value) 
             return errors;
 
-        if(typeof value !== "number") {
+        if(typeof value !== "number" && !this.#toParseValue) {
             errors.push("An illegal type was passed, 'number' expected.")
             return errors;
         }
@@ -166,7 +172,7 @@ export class NumberValidator implements RangeBounded {
         if(this.#isOptional && !value) 
             return true;
 
-        if(typeof value !== "number") {
+        if(typeof value !== "number" && !this.#toParseValue) {
             throw new ValidationError("An illegal type was passed, 'number' expected.")
         }
         
