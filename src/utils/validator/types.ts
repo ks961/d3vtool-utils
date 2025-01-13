@@ -5,7 +5,7 @@ export interface RangeBounded {
 
 export type RegExpValidator = {
     error: string
-    pattern: string,
+    pattern: string | Function,
 }
 
 

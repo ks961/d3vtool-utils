@@ -42,6 +42,74 @@ export class NumberValidator implements RangeBounded {
         return this;
     }
 
+    greaterThan(
+        rhs: number, 
+        error: string = `Value must be greater than '${rhs}'`
+    ) {
+        this.#validators.push({
+            pattern: (lhs: number) => lhs > rhs,
+            error,
+        });
+        return this;
+    }
+
+    lessThan(
+        rhs: number, 
+        error: string = `Value must be less than '${rhs}'`
+    ) {
+        this.#validators.push({
+            pattern: (lhs: number) => lhs < rhs,
+            error,
+        });
+        return this;
+    }
+
+    equalTo(
+        rhs: number, 
+        error: string = "Values must be equal"
+    ) {
+        this.#validators.push({
+            pattern: (lhs: number) => lhs === rhs,
+            error,
+        });
+        
+        return this;
+    }
+
+    notEqualTo(
+        rhs: number, error: 
+        string = "Values must not be equal"
+    ) {
+        this.#validators.push({
+            pattern: (lhs: number) => lhs !== rhs,
+            error,
+        });
+    }
+
+    greaterThanOrEqual(
+        rhs: number, 
+        error: string = `Value must be greater or equal to '${rhs}'`
+    ) {
+        this.#validators.push({
+            pattern: (lhs: number) => lhs >= rhs,
+            error,
+        });
+
+        return this;
+    }
+
+    lessThanOrEqual(
+        rhs: number, 
+        error: string = `Value must be less or equal to '${rhs}'`
+    ) {
+        this.#validators.push({
+            pattern: (lhs: number) => lhs <= rhs,
+            error,
+        });
+
+        return this;
+    }
+
     equalsToField(
         propertyName: string, 
         errorMsg: string = "The provided value is invalid or does not meet the expected criteria."
@@ -78,9 +146,15 @@ export class NumberValidator implements RangeBounded {
         }
 
         for(const validator of this.#validators) {
-            const regex = new RegExp(validator.pattern);
-            if(!regex.test(value.toString()))
-                errors.push(validator.error);
+            if(validator.pattern instanceof Function) {
+                const result = validator.pattern(value);
+                if(!result)
+                    errors.push(validator.error);
+            } else {
+                const regex = new RegExp(validator.pattern);
+                if(!regex.test(value.toString()))
+                    errors.push(validator.error);
+            }
         }
 
         return errors;
@@ -96,9 +170,15 @@ export class NumberValidator implements RangeBounded {
         }
         
         for(const validator of this.#validators) {
-            const regex = new RegExp(validator.pattern);
-            if(!regex.test(value.toString()))
-                throw new ValidationError(validator.error);
+            if(validator.pattern instanceof Function) {
+                const result = validator.pattern(value);
+                if(!result)
+                    throw new ValidationError(validator.error);
+            } else {
+                const regex = new RegExp(validator.pattern);
+                if(!regex.test(value.toString()))
+                    throw new ValidationError(validator.error);
+            }
         }
 
         return true;
