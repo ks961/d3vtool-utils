@@ -145,14 +145,15 @@ export class NumberValidator implements RangeBounded {
             return errors;
         }
 
+        const parsedValue = parseInt(value as any);
         for(const validator of this.#validators) {
             if(validator.pattern instanceof Function) {
-                const result = validator.pattern(value);
+                const result = validator.pattern(parsedValue);
                 if(!result)
                     errors.push(validator.error);
             } else {
                 const regex = new RegExp(validator.pattern);
-                if(!regex.test(value.toString()))
+                if(!regex.test(parsedValue.toString()))
                     errors.push(validator.error);
             }
         }
@@ -169,14 +170,15 @@ export class NumberValidator implements RangeBounded {
             throw new ValidationError("An illegal type was passed, 'number' expected.")
         }
         
+        const parsedValue = parseInt(value as any);
         for(const validator of this.#validators) {
             if(validator.pattern instanceof Function) {
-                const result = validator.pattern(value);
+                const result = validator.pattern(parsedValue);
                 if(!result)
                     throw new ValidationError(validator.error);
             } else {
                 const regex = new RegExp(validator.pattern);
-                if(!regex.test(value.toString()))
+                if(!regex.test(parsedValue.toString()))
                     throw new ValidationError(validator.error);
             }
         }
