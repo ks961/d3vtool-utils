@@ -105,6 +105,7 @@ export class StringValidator implements RangeBounded {
         }
 
         for(const validator of this.#validators) {
+            if(validator.pattern instanceof Function) continue;
             const regex = new RegExp(validator.pattern);
             
             if(!regex.test(value))
@@ -122,6 +123,7 @@ export class StringValidator implements RangeBounded {
             throw new ValidationError("An illegal type was passed, 'string' expected.");
         }
         for(const validator of this.#validators) {
+            if(validator.pattern instanceof Function) continue;
             const regex = new RegExp(validator.pattern);
             if(!regex.test(value))
                 throw new ValidationError(validator.error);
